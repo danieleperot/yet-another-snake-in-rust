@@ -21,7 +21,7 @@ impl World {
         };
 
         world.snake.grow();
-        world.apples.push(Coordinate::new(4, 7));
+        world.apples.push(Coordinate::new(15, 7));
 
         world
     }
@@ -31,6 +31,22 @@ impl World {
 
         for apple in self.apples.iter_mut() {
             if apple.clone() == self.snake.head_position() {
+                std::thread::spawn(|| {
+                    use std::time::Duration;
+                    use rodio::{OutputStream, Sink};
+                    use rodio::source::{SineWave, Source};
+
+                    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+                    let sink = Sink::try_new(&stream_handle).unwrap();
+
+                    // Add a dummy source of the sake of the example.
+                    sink.append(SineWave::new(600.0).take_duration(Duration::from_millis(200)).amplify(0.10));
+                    sink.append(SineWave::new(800.0).take_duration(Duration::from_millis(500)).amplify(0.10));
+
+                    // The sound plays in a separate thread. This call will block the current thread until the sink
+                    // has finished playing all its queued sounds.
+                    sink.sleep_until_end();
+                });
                 self.snake.grow();
                 *apple = Coordinate::random();
             }
