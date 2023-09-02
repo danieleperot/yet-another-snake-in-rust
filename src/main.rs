@@ -1,5 +1,5 @@
 mod snake;
-mod draw;
+mod ui;
 mod world;
 mod notify;
 
@@ -30,12 +30,15 @@ fn main() {
     let mut world = world::World::new(40, 15);
     let game_speed = 300;
 
+    ui::draw_intro();
     let notifications = notify::Notifications::new(0.005);
     notifications.handle_event(world::Event::Welcome);
+    ui::user_input();
+    ui::draw_screen(&world);
 
     loop {
         world.tick();
-        draw::draw_screen(&world);
+        ui::draw_screen(&world);
         notifications.handle_world_events(&world);
 
         sleep(Duration::from_millis(game_speed));

@@ -1,3 +1,6 @@
+use std::time::Duration;
+use rodio::{OutputStream, Sink, Source};
+use rodio::source::SineWave;
 use crate::world::{Event, World};
 
 pub struct Notifications {
@@ -11,10 +14,7 @@ impl Notifications {
 
     pub fn handle_world_events(&self, world: &World) {
         for event in world.events() {
-            let volume = self.max_sound_volume.clone();
-            std::thread::spawn(move || {
-                Notifications::new(volume).handle_event(event.clone());
-            });
+            self.handle_event(event.clone());
         }
     }
 
@@ -27,29 +27,33 @@ impl Notifications {
     }
 
     fn play_sound(&self, sound: &[Note]) {
-        use std::time::Duration;
-        use rodio::{OutputStream, Sink};
-        use rodio::source::{SineWave, Source};
+        let volume = self.max_sound_volume.clone();
+        let mut sine_waves = vec![];
 
-        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-        let sink = Sink::try_new(&stream_handle).unwrap();
-
-        for note in sound {
-            sink.append(
-                SineWave::new(note.0)
-                    .take_duration(Duration::from_millis(note.1))
-                    .amplify(
-                        if note.2 <= self.max_sound_volume { note.2 }
-                        else { self.max_sound_volume }
-                    )
-            );
+        for note in sound.clone().iter() {
+            let new_note = note.clone();
+            let amplitude = if new_note.2 <= volume { new_note.2 } else { volume };
+            sine_waves.push(
+                SineWave::new(new_note.0)
+                    .take_duration(Duration::from_millis(new_note.1))
+                    .amplify(amplitude)
+                );
         }
-        sink.sleep_until_end();
+
+        std::thread::spawn(move || {
+            let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+            let sink = Sink::try_new(&stream_handle).unwrap();
+            for note in sine_waves {
+                sink.append(note);
+            }
+            sink.sleep_until_end();
+        });
     }
 }
 
 
 // ----------------------- SOUNDS -----------------------
+#[derive(Copy, Clone)]
 struct Note (
     f32, // Frequency
     u64, // Duration (in milliseconds)
