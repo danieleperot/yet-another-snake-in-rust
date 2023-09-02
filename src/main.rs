@@ -39,7 +39,7 @@ fn main() {
 
     loop {
         world.tick();
-        
+
         user_interaction.draw_screen(&world);
         notifications.handle_world_events(&world);
 

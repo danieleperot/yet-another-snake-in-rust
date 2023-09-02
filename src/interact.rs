@@ -19,7 +19,7 @@ impl UserInteraction {
                 self.draw_x(world, y, x);
             }
 
-            println!();
+            self.println("");
         }
 
         self.draw_padding(world.max_x());
@@ -29,7 +29,7 @@ impl UserInteraction {
         self.clear_screen();
 
         for line in INTRO_SCREEN {
-            println!("{}", line);
+            self.println(line);
         }
     }
 
@@ -39,26 +39,34 @@ impl UserInteraction {
     }
 
     fn clear_screen(&self) {
-        print!("\x1B[2J\x1B[1;1H");
+        self.print("\x1B[2J\x1B[1;1H");
     }
 
     fn draw_padding(&self, size: usize) {
         for _ in 0..(size + 2 * PADDING) { print!("=") }
-        println!();
+        self.println("");
     }
 
     fn draw_x(&self, world: &World, y: usize, x: isize) {
         if x < 0 {
-            print!(" ");
+            self.print(" ");
             return;
         }
 
         match world.check_tile_in_position(Coordinate::new(x as usize, y)) {
-            TileType::SnakeHead => print!("@"),
-            TileType::SnakeBody => print!("#"),
-            TileType::Apple => print!("A"),
-            TileType::Empty => print!("."),
+            TileType::SnakeHead => self.print("@"),
+            TileType::SnakeBody => self.print("#"),
+            TileType::Apple => self.print("A"),
+            TileType::Empty => self.print("."),
         }
+    }
+
+    fn print(&self, string: &str) {
+        print!("{}", string);
+    }
+
+    fn println(&self, string: &str) {
+        self.print(format!("{}\n", string).as_str());
     }
 }
 
