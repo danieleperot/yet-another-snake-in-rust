@@ -30,7 +30,7 @@ fn main() {
     let game_speed = 300;
     let mut world = world::World::new(40, 15);
     let notifications = notify::Notifications::new(0.005);
-    let user_interaction = interact::UserInteraction::new();
+    let mut user_interaction = interact::UserInteraction::new();
 
     user_interaction.draw_intro();
     notifications.handle_event(world::Event::Welcome);

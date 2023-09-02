@@ -1,16 +1,35 @@
 use crate::Coordinate;
 use crate::world::{TileType, World};
 
+use std::io;
+use std::io::{Error, Stdout, Write};
+use std::thread;
+use std::time;
+
+use termion;
+use termion::AsyncReader;
+use termion::event::Key;
+use termion::input::{Keys, TermRead};
+use termion::raw::{IntoRawMode, RawTerminal};
+
 const PADDING: usize = 3;
 
-pub struct UserInteraction {}
+pub struct UserInteraction {
+    stdout: RawTerminal<Stdout>,
+    stdin: Keys<AsyncReader>
+}
 
 impl UserInteraction {
     pub fn new () -> Self {
-        UserInteraction {}
+        UserInteraction {
+            // Set terminal to raw mode to allow reading stdin one key at a time
+            stdout: io::stdout().into_raw_mode().unwrap(),
+            // Use asynchronous stdin
+            stdin: termion::async_stdin().keys()
+        }
     }
 
-    pub fn draw_screen(&self, world: &World) {
+    pub fn draw_screen(&mut self, world: &World) {
         self.clear_screen();
 
         self.draw_padding(world.max_x());
@@ -21,33 +40,48 @@ impl UserInteraction {
 
             self.println("");
         }
-
         self.draw_padding(world.max_x());
+
+        self.done_drawing();
     }
 
-    pub fn draw_intro(&self) {
+    pub fn draw_intro(&mut self) {
         self.clear_screen();
 
         for line in INTRO_SCREEN {
             self.println(line);
         }
+
+        self.done_drawing();
     }
 
-    pub fn user_input(&self) {
-        let mut s = "".to_string();
-        std::io::stdin().read_line(&mut s).unwrap();
+    pub fn user_input(&mut self) {
+        match self.stdin.next() {
+            None => {}
+            Some(input) => match input {
+                Err(_) => {}
+                Ok(key) => match key {
+                    _ => {}
+                }
+            }
+        }
     }
 
-    fn clear_screen(&self) {
-        self.print("\x1B[2J\x1B[1;1H");
+    fn clear_screen(&mut self) {
+        write!(
+            self.stdout,
+            "{}{}",
+            termion::clear::All,
+            termion::cursor::Goto(1, 1)
+        ).unwrap();
     }
 
-    fn draw_padding(&self, size: usize) {
+    fn draw_padding(&mut self, size: usize) {
         for _ in 0..(size + 2 * PADDING) { print!("=") }
         self.println("");
     }
 
-    fn draw_x(&self, world: &World, y: usize, x: isize) {
+    fn draw_x(&mut self, world: &World, y: usize, x: isize) {
         if x < 0 {
             self.print(" ");
             return;
@@ -61,12 +95,20 @@ impl UserInteraction {
         }
     }
 
-    fn print(&self, string: &str) {
-        print!("{}", string);
+    fn print(&mut self, string: &str) {
+        write!(self.stdout, "{}", string.replace("\n", "\r\n")).unwrap();
     }
 
-    fn println(&self, string: &str) {
+    fn println(&mut self, string: &str) {
         self.print(format!("{}\n", string).as_str());
+    }
+
+    fn done_drawing(&mut self) {
+        self.stdout.lock().flush().unwrap();
+    }
+
+    fn drop(&mut self) {
+        self.stdout.activate_raw_mode().unwrap();
     }
 }
 
