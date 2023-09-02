@@ -7,10 +7,6 @@ use std::thread::sleep;
 use std::time::Duration;
 use rand::Rng;
 
-const MAX_Y: usize = 15;
-const MAX_X: usize = 40;
-const PADDING: usize = 3;
-
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Coordinate {
     x_pos: usize,
@@ -22,19 +18,19 @@ impl Coordinate {
         Coordinate { x_pos, y_pos }
     }
 
-    pub fn random() -> Coordinate {
+    pub fn random(max_x: usize, max_y: usize) -> Coordinate {
         Coordinate {
-            x_pos: rand::thread_rng().gen_range(0..MAX_X),
-            y_pos: rand::thread_rng().gen_range(0..MAX_Y)
+            x_pos: rand::thread_rng().gen_range(0..max_x),
+            y_pos: rand::thread_rng().gen_range(0..max_y)
         }
     }
 }
 
 fn main() {
-    let mut world = world::World::new();
+    let mut world = world::World::new(40, 15);
     let game_speed = 300;
 
-    let notifications = notify::Notifications::new(0.01);
+    let notifications = notify::Notifications::new(0.005);
     notifications.handle_event(world::Event::Welcome);
 
     loop {

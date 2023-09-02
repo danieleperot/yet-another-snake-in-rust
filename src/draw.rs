@@ -1,23 +1,25 @@
-use crate::{MAX_Y, MAX_X, PADDING, Coordinate};
+use crate::Coordinate;
 use crate::world::{TileType, World};
+
+const PADDING: usize = 3;
 
 pub fn draw_screen(world: &World) {
     // Clear screen
     print!("\x1B[2J\x1B[1;1H");
 
-    draw_padding();
-    for y in 0..MAX_Y {
-        for x in (0 - PADDING as isize)..(MAX_X) as isize {
+    draw_padding(world.max_x());
+    for y in 0..world.max_y() {
+        for x in (0 - PADDING as isize)..(world.max_x()) as isize {
             draw_x(world, y, x);
         }
 
         println!();
     }
-    draw_padding();
+    draw_padding(world.max_x());
 }
 
-fn draw_padding() {
-    for _ in 0..(MAX_X + 2 * PADDING) { print!("=") }
+fn draw_padding(size: usize) {
+    for _ in 0..(size + 2 * PADDING) { print!("=") }
     println!();
 }
 

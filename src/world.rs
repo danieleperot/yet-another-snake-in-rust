@@ -11,7 +11,9 @@ pub enum Event {
 pub struct World {
     snake: Snake,
     apples: Vec<Coordinate>,
-    events: Vec<Event>
+    events: Vec<Event>,
+    max_x: usize,
+    max_y: usize
 }
 
 pub enum TileType {
@@ -22,11 +24,13 @@ pub enum TileType {
 }
 
 impl World {
-    pub fn new() -> World {
+    pub fn new(max_x: usize, max_y: usize) -> World {
         let mut world = World {
-            snake: Snake::new(),
+            snake: Snake::new(Coordinate { x_pos: max_x / 2, y_pos: max_y / 2 }),
             apples: vec![],
-            events: vec![]
+            events: vec![],
+            max_x,
+            max_y
         };
 
         world.snake.grow();
@@ -37,7 +41,7 @@ impl World {
 
     pub fn tick(&mut self) -> () {
         self.events.clear();
-        self.snake.slither();
+        self.snake.slither(self.max_x);
 
         self.events.push(Event::SimpleMove);
 
@@ -45,7 +49,7 @@ impl World {
             if apple.clone() == self.snake.head_position() {
                 self.snake.grow();
                 self.events.push(Event::AppleEaten);
-                *apple = Coordinate::random();
+                *apple = Coordinate::random(self.max_x, self.max_y);
             }
         }
     }
@@ -69,6 +73,14 @@ impl World {
 
     pub fn events(&self) -> Vec<Event> {
         self.events.clone()
+    }
+
+    pub fn max_x(&self) -> usize {
+        self.max_x
+    }
+
+    pub fn max_y(&self) -> usize {
+        self.max_y
     }
 }
 
