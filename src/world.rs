@@ -1,5 +1,5 @@
 use crate::Coordinate;
-use crate::snake::Snake;
+use crate::snake::{Direction, Snake};
 
 #[derive(Clone)]
 pub enum Event {
@@ -26,7 +26,10 @@ pub enum TileType {
 impl World {
     pub fn new(max_x: usize, max_y: usize) -> World {
         let mut world = World {
-            snake: Snake::new(Coordinate { x_pos: max_x / 2, y_pos: max_y / 2 }),
+            snake: Snake::new(
+                Coordinate { x_pos: max_x / 2, y_pos: max_y / 2 },
+                Direction::Right
+            ),
             apples: vec![],
             events: vec![],
             max_x,
@@ -41,7 +44,7 @@ impl World {
 
     pub fn tick(&mut self) -> () {
         self.events.clear();
-        self.snake.slither(self.max_x);
+        self.snake.slither(self.max_x, self.max_y);
 
         self.events.push(Event::SimpleMove);
 
