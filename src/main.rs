@@ -1,6 +1,7 @@
 mod snake;
 mod draw;
 mod world;
+mod notify;
 
 use std::thread::sleep;
 use std::time::Duration;
@@ -31,11 +32,14 @@ impl Coordinate {
 
 fn main() {
     let mut world = world::World::new();
-    let game_speed = 500;
+    let game_speed = 300;
+
+    notify::handle_event(&world::Event::Welcome);
 
     loop {
         world.tick();
         draw::draw_screen(&world);
+        notify::handle_world_events(&world);
 
         sleep(Duration::from_millis(game_speed));
     }

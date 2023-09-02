@@ -1,9 +1,17 @@
 use crate::Coordinate;
 use crate::snake::Snake;
 
+#[derive(Clone)]
+pub enum Event {
+    Welcome,
+    SimpleMove,
+    AppleEaten
+}
+
 pub struct World {
     snake: Snake,
-    apples: Vec<Coordinate>
+    apples: Vec<Coordinate>,
+    events: Vec<Event>
 }
 
 pub enum TileType {
@@ -17,7 +25,8 @@ impl World {
     pub fn new() -> World {
         let mut world = World {
             snake: Snake::new(),
-            apples: vec![]
+            apples: vec![],
+            events: vec![]
         };
 
         world.snake.grow();
@@ -27,27 +36,15 @@ impl World {
     }
 
     pub fn tick(&mut self) -> () {
+        self.events.clear();
         self.snake.slither();
+
+        self.events.push(Event::SimpleMove);
 
         for apple in self.apples.iter_mut() {
             if apple.clone() == self.snake.head_position() {
-                std::thread::spawn(|| {
-                    use std::time::Duration;
-                    use rodio::{OutputStream, Sink};
-                    use rodio::source::{SineWave, Source};
-
-                    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-                    let sink = Sink::try_new(&stream_handle).unwrap();
-
-                    // Add a dummy source of the sake of the example.
-                    sink.append(SineWave::new(600.0).take_duration(Duration::from_millis(200)).amplify(0.10));
-                    sink.append(SineWave::new(800.0).take_duration(Duration::from_millis(500)).amplify(0.10));
-
-                    // The sound plays in a separate thread. This call will block the current thread until the sink
-                    // has finished playing all its queued sounds.
-                    sink.sleep_until_end();
-                });
                 self.snake.grow();
+                self.events.push(Event::AppleEaten);
                 *apple = Coordinate::random();
             }
         }
@@ -68,6 +65,10 @@ impl World {
         }
 
         TileType::Empty
+    }
+
+    pub fn events(&self) -> Vec<Event> {
+        self.events.clone()
     }
 }
 
