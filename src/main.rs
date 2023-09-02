@@ -1,5 +1,5 @@
 mod snake;
-mod ui;
+mod interact;
 mod world;
 mod notify;
 
@@ -27,18 +27,20 @@ impl Coordinate {
 }
 
 fn main() {
-    let mut world = world::World::new(40, 15);
     let game_speed = 300;
-
-    ui::draw_intro();
+    let mut world = world::World::new(40, 15);
     let notifications = notify::Notifications::new(0.005);
+    let user_interaction = interact::UserInteraction::new();
+
+    user_interaction.draw_intro();
     notifications.handle_event(world::Event::Welcome);
-    ui::user_input();
-    ui::draw_screen(&world);
+    user_interaction.user_input();
+    user_interaction.draw_screen(&world);
 
     loop {
         world.tick();
-        ui::draw_screen(&world);
+        
+        user_interaction.draw_screen(&world);
         notifications.handle_world_events(&world);
 
         sleep(Duration::from_millis(game_speed));
