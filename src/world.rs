@@ -21,13 +21,20 @@ impl World {
         };
 
         world.snake.grow();
-        world.apples.push(Coordinate::random());
+        world.apples.push(Coordinate::new(4, 7));
 
         world
     }
 
     pub fn tick(&mut self) -> () {
         self.snake.slither();
+
+        for apple in self.apples.iter_mut() {
+            if apple.clone() == self.snake.head_position() {
+                self.snake.grow();
+                *apple = Coordinate::random();
+            }
+        }
     }
 
     pub fn check_tile_in_position(&self, coordinate: Coordinate) -> TileType {
