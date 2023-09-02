@@ -14,6 +14,13 @@ use termion::raw::{IntoRawMode, RawTerminal};
 
 const PADDING: usize = 3;
 
+#[derive(PartialEq)]
+pub enum UserAction {
+    Close,
+    Other,
+    NoKey
+}
+
 pub struct UserInteraction {
     stdout: RawTerminal<Stdout>,
     stdin: Keys<AsyncReader>
@@ -42,6 +49,10 @@ impl UserInteraction {
         }
         self.draw_padding(world.max_x());
 
+        for line in BOTTOM_TEXT {
+            self.println(line);
+        }
+
         self.done_drawing();
     }
 
@@ -55,13 +66,15 @@ impl UserInteraction {
         self.done_drawing();
     }
 
-    pub fn user_input(&mut self) {
-        match self.stdin.next() {
-            None => {}
+    pub fn user_input(&mut self) -> UserAction {
+        return match self.stdin.next() {
+            None => UserAction::NoKey,
             Some(input) => match input {
-                Err(_) => {}
+                Err(_) => UserAction::NoKey,
                 Ok(key) => match key {
-                    _ => {}
+                    Key::Char('q') => UserAction::Close,
+                    Key::Ctrl('C') => UserAction::Close,
+                    _ => UserAction::Other
                 }
             }
         }
@@ -77,7 +90,7 @@ impl UserInteraction {
     }
 
     fn draw_padding(&mut self, size: usize) {
-        for _ in 0..(size + 2 * PADDING) { print!("=") }
+        for _ in 0..(size + 2 * PADDING) { self.print("=") }
         self.println("");
     }
 
@@ -108,7 +121,8 @@ impl UserInteraction {
     }
 
     fn drop(&mut self) {
-        self.stdout.activate_raw_mode().unwrap();
+        self.stdout.suspend_raw_mode().unwrap();
+        self.stdout.lock().flush().unwrap();
     }
 }
 
@@ -121,4 +135,9 @@ const INTRO_SCREEN: [&str; 8] = [
     "      ====================================================",
     "",
     "                --  Press ANY KEY to start --"
+];
+
+const BOTTOM_TEXT: [&str; 2] = [
+    "",
+    "Press Q to exit. Press W,A,S or D to move the snake."
 ];

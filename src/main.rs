@@ -3,9 +3,11 @@ mod interact;
 mod world;
 mod notify;
 
+use std::process::exit;
 use std::thread::sleep;
 use std::time::Duration;
 use rand::Rng;
+use crate::interact::UserAction;
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Coordinate {
@@ -34,10 +36,21 @@ fn main() {
 
     user_interaction.draw_intro();
     notifications.handle_event(world::Event::Welcome);
-    user_interaction.user_input();
+    loop {
+        match user_interaction.user_input() {
+            UserAction::Other => break,
+            UserAction::Close => exit(0),
+            _ => {}
+        }
+    }
     user_interaction.draw_screen(&world);
 
     loop {
+        let action = user_interaction.user_input();
+        if action == UserAction::Close {
+            break;
+        }
+
         world.tick();
 
         user_interaction.draw_screen(&world);
