@@ -19,7 +19,9 @@ impl World {
             snake: Snake::new(),
             apples: vec![]
         };
+
         world.snake.grow();
+        world.apples.push(Coordinate::random());
 
         world
     }

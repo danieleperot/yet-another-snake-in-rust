@@ -4,6 +4,7 @@ mod world;
 
 use std::thread::sleep;
 use std::time::Duration;
+use rand::Rng;
 
 const MAX_Y: usize = 15;
 const MAX_X: usize = 40;
@@ -18,6 +19,13 @@ pub struct Coordinate {
 impl Coordinate {
     pub fn new(x_pos: usize, y_pos: usize) -> Self {
         Coordinate { x_pos, y_pos }
+    }
+
+    pub fn random() -> Coordinate {
+        Coordinate {
+            x_pos: rand::thread_rng().gen_range(0..MAX_X),
+            y_pos: rand::thread_rng().gen_range(0..MAX_Y)
+        }
     }
 }
 
