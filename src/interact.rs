@@ -126,7 +126,7 @@ impl UserInteraction {
     }
 }
 
-const INTRO_SCREEN: [&str; 8] = [
+const INTRO_SCREEN: [&str; 9] = [
     "",
     "      ====================================================",
     "      ||               Welcome to Snake!                ||",
@@ -134,7 +134,8 @@ const INTRO_SCREEN: [&str; 8] = [
     "      ||            Daniele Perot (c) 2023              ||",
     "      ====================================================",
     "",
-    "                --  Press ANY KEY to start --"
+    "                --  Press ANY KEY to start --",
+    "                      or press Q to exit"
 ];
 
 const BOTTOM_TEXT: [&str; 2] = [
