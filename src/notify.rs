@@ -27,12 +27,13 @@ impl Notifications {
         }
     }
 
+    //noinspection RsBorrowChecker
     fn play_sound(&self, sound: &[Note], in_thread: bool) {
-        let volume = self.max_sound_volume.clone();
+        let volume = self.max_sound_volume;
         let mut sine_waves = vec![];
 
         for note in sound.clone().iter() {
-            let new_note = note.clone();
+            let new_note = *note;
             let amplitude = if new_note.2 <= volume {
                 new_note.2
             } else {

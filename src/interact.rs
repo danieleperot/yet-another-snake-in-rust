@@ -4,7 +4,6 @@ use crate::Coordinate;
 use std::io;
 use std::io::{Stdout, Write};
 
-use termion;
 use termion::color::Color;
 use termion::event::Key;
 use termion::input::{Keys, TermRead};
@@ -49,6 +48,7 @@ impl UserInteraction {
         }
     }
 
+    //noinspection RsBorrowChecker
     pub fn draw_screen(&mut self, world: &World) {
         self.clear_screen(ScreenType::Game);
 
@@ -90,7 +90,7 @@ impl UserInteraction {
     }
 
     pub fn user_input(&mut self) -> UserAction {
-        return match self.stdin.next() {
+        match self.stdin.next() {
             None => UserAction::None,
             Some(input) => match input {
                 Err(_) => UserAction::None,
@@ -104,7 +104,7 @@ impl UserInteraction {
                     _ => UserAction::Unsupported,
                 },
             },
-        };
+        }
     }
 
     fn clear_screen(&mut self, new_screen: ScreenType) {
@@ -142,7 +142,7 @@ impl UserInteraction {
     }
 
     fn print(&mut self, string: &str) {
-        write!(self.stdout, "{}", string.replace("\n", "\r\n")).unwrap();
+        write!(self.stdout, "{}", string.replace('\n', "\r\n")).unwrap();
     }
 
     fn println(&mut self, string: &str) {

@@ -35,12 +35,12 @@ impl Snake {
         }
     }
 
-    pub fn change_direction(&mut self, direction: Direction) -> () {
+    pub fn change_direction(&mut self, direction: Direction) {
         self.direction = direction;
     }
 
-    pub fn grow(&mut self) -> () {
-        let last_part = self.parts.last().unwrap().clone();
+    pub fn grow(&mut self) {
+        let last_part = *self.parts.last().unwrap();
         // Check edge conditions!
         self.parts.push(Coordinate {
             x_pos: last_part.x_pos,
@@ -48,7 +48,8 @@ impl Snake {
         });
     }
 
-    pub fn slither(&mut self, max_x: usize, max_y: usize) -> () {
+    //noinspection RsBorrowChecker
+    pub fn slither(&mut self, max_x: usize, max_y: usize) {
         let current_snake = self.clone();
         for (position, part) in self.parts.iter_mut().enumerate() {
             *part = if position == 0 {
@@ -72,7 +73,7 @@ impl Snake {
     }
 
     pub fn head_position(&self) -> Coordinate {
-        self.parts.first().unwrap().clone()
+        *self.parts.first().unwrap()
     }
 
     pub fn direction(&self) -> Direction {
@@ -80,6 +81,7 @@ impl Snake {
     }
 }
 
+//noinspection RsBorrowChecker
 fn move_up(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordinate {
     Coordinate::new(
         coordinate.x_pos,
@@ -91,6 +93,7 @@ fn move_up(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordinate
     )
 }
 
+//noinspection RsBorrowChecker
 fn move_right(coordinate: &Coordinate, max_x: &usize, _max_y: &usize) -> Coordinate {
     Coordinate::new(
         if coordinate.x_pos == max_x - 1 {
@@ -102,6 +105,7 @@ fn move_right(coordinate: &Coordinate, max_x: &usize, _max_y: &usize) -> Coordin
     )
 }
 
+//noinspection RsBorrowChecker
 fn move_down(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordinate {
     Coordinate::new(
         coordinate.x_pos,
@@ -113,6 +117,7 @@ fn move_down(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordina
     )
 }
 
+//noinspection RsBorrowChecker
 fn move_left(coordinate: &Coordinate, max_x: &usize, _max_y: &usize) -> Coordinate {
     Coordinate::new(
         if coordinate.x_pos == 0 {

@@ -29,29 +29,21 @@ impl Coordinate {
     }
 }
 
-fn main() -> () {
-    let game_speed = 150;
-    let mut world = World::new(40, 15);
+fn main() {
     let notifications = Notifications::new(0.05);
     let mut user_interaction = UserInteraction::new();
 
-    game(
-        game_speed,
-        &mut world,
-        &notifications,
-        &mut user_interaction,
-    );
+    game(&notifications, &mut user_interaction);
 
     user_interaction.draw_outro();
     notifications.handle_event(Event::Exit);
 }
 
-fn game(
-    game_speed: u64,
-    world: &mut World,
-    notifications: &Notifications,
-    user_interaction: &mut UserInteraction,
-) {
+//noinspection RsBorrowChecker
+fn game(notifications: &Notifications, user_interaction: &mut UserInteraction) {
+    let game_speed = 150;
+    let mut world = World::new(40, 15);
+
     user_interaction.draw_intro();
     notifications.handle_event(Event::Welcome);
 
