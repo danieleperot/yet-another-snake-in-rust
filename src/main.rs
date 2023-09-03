@@ -30,7 +30,7 @@ impl Coordinate {
 }
 
 fn main() -> () {
-    let game_speed = 300;
+    let game_speed = 150;
     let mut world = World::new(40, 15);
     let notifications = Notifications::new(0.05);
     let mut user_interaction = UserInteraction::new();

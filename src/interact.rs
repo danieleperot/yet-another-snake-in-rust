@@ -5,7 +5,8 @@ use std::io;
 use std::io::{Stdout, Write};
 
 use termion;
-use termion::AsyncReader;
+use termion::{AsyncReader, color};
+use termion::color::Color;
 use termion::event::Key;
 use termion::input::{Keys, TermRead};
 use termion::raw::{IntoRawMode, RawTerminal};
@@ -116,22 +117,31 @@ impl UserInteraction {
     }
 
     fn draw_padding(&mut self, size: usize) {
-        for _ in 0..(size + 2 * PADDING) { self.print("=") }
+        for _ in 0..(size + 2 * PADDING) { self.print("==") }
         self.println("");
     }
 
     fn draw_x(&mut self, world: &World, y: usize, x: isize) {
         if x < 0 {
-            self.print(" ");
+            self.print("  ");
             return;
         }
 
         match world.check_tile_in_position(Coordinate::new(x as usize, y)) {
-            TileType::SnakeHead => self.print("@"),
-            TileType::SnakeBody => self.print("#"),
-            TileType::Apple => self.print("A"),
-            TileType::Empty => self.print("."),
+            TileType::SnakeHead => self.color_print("@@", color::LightGreen),
+            TileType::SnakeBody => self.color_print("##", color::Green),
+            TileType::Apple => self.color_print("AA", color::Red),
+            TileType::Empty => self.print(".."),
         }
+    }
+
+    fn color_print<C: Color>(&mut self, string: &str, color: C) {
+        self.print(format!(
+            "{}{}{}",
+            color::Fg(color),
+            string,
+            color::Fg(color::Reset)
+        ).as_str())
     }
 
     fn print(&mut self, string: &str) {
