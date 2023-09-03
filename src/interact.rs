@@ -14,6 +14,10 @@ const PADDING: usize = 3;
 
 #[derive(PartialEq)]
 pub enum UserAction {
+    MoveUp,
+    MoveRight,
+    MoveDown,
+    MoveLeft,
     Close,
     Unsupported,
     None
@@ -90,6 +94,10 @@ impl UserInteraction {
             Some(input) => match input {
                 Err(_) => UserAction::None,
                 Ok(key) => match key {
+                    Key::Char('w') => UserAction::MoveUp,
+                    Key::Char('a') => UserAction::MoveLeft,
+                    Key::Char('s') => UserAction::MoveDown,
+                    Key::Char('d') => UserAction::MoveRight,
                     Key::Char('q') => UserAction::Close,
                     Key::Ctrl('C') => UserAction::Close,
                     _ => UserAction::Unsupported

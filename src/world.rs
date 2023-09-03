@@ -1,4 +1,5 @@
 use crate::Coordinate;
+use crate::interact::UserAction;
 use crate::snake::{Direction, Snake};
 
 #[derive(Clone)]
@@ -42,8 +43,17 @@ impl World {
         world
     }
 
-    pub fn tick(&mut self) -> () {
+    pub fn tick(&mut self, action: UserAction) -> () {
         self.events.clear();
+
+        match action {
+            UserAction::MoveUp => self.snake.change_direction(Direction::Up),
+            UserAction::MoveRight => self.snake.change_direction(Direction::Right),
+            UserAction::MoveDown => self.snake.change_direction(Direction::Down),
+            UserAction::MoveLeft => self.snake.change_direction(Direction::Left),
+            _ => {}
+        }
+
         self.snake.slither(self.max_x, self.max_y);
 
         self.events.push(Event::SimpleMove);

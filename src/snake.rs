@@ -19,6 +19,10 @@ impl Snake {
         Snake { parts: vec![head], direction }
     }
 
+    pub fn change_direction(&mut self, direction: Direction) -> () {
+        self.direction = direction;
+    }
+
     pub fn grow(&mut self) -> () {
         let last_part = self.parts.last().unwrap().clone();
         // Check edge conditions!

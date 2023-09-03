@@ -59,7 +59,7 @@ fn game(game_speed: u64, world: &mut World, notifications: Notifications, user_i
             return;
         }
 
-        world.tick();
+        world.tick(action);
 
         user_interaction.draw_screen(&world);
         notifications.handle_world_events(&world);
