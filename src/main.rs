@@ -50,7 +50,7 @@ fn game(notifications: &Notifications, user_interaction: &mut UserInteraction) {
     let mut world = World::new(40, 15);
 
     user_interaction.draw_intro();
-    notifications.handle_event(Event::Crash);
+    notifications.handle_event(Event::Welcome);
 
     loop {
         match user_interaction.user_input() {
