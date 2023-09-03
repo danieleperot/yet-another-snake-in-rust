@@ -1,6 +1,7 @@
 use crate::interact::UserAction;
 use crate::snake::{Direction, Snake};
 use crate::Coordinate;
+use std::collections::HashMap;
 
 #[derive(Clone)]
 pub enum Event {
@@ -12,8 +13,8 @@ pub enum Event {
 
 pub struct World {
     snake: Snake,
-    apples: Vec<Coordinate>,
     events: Vec<Event>,
+    apples: HashMap<String, bool>,
     max_x: usize,
     max_y: usize,
 }
@@ -35,16 +36,16 @@ impl World {
                 },
                 Direction::Right,
             ),
-            apples: vec![],
+            apples: HashMap::new(),
             events: vec![],
             max_x,
             max_y,
         };
 
         world.snake.grow();
-        world.apples.push(Coordinate::random(max_x, max_y));
-        world.apples.push(Coordinate::random(max_x, max_y));
-        world.apples.push(Coordinate::random(max_x, max_y));
+        world.add_random_apple();
+        world.add_random_apple();
+        world.add_random_apple();
 
         world
     }
@@ -65,23 +66,14 @@ impl World {
         }
 
         self.snake.slither(self.max_x, self.max_y);
-
         self.events.push(Event::SimpleMove);
 
-        for apple in self.apples.iter_mut() {
-            if *apple == self.snake.head_position() {
-                self.snake.grow();
-                self.events.push(Event::AppleEaten);
-                *apple = Coordinate::random(self.max_x, self.max_y);
-            }
-        }
+        self.check_apple_eaten();
     }
 
     pub fn check_tile_in_position(&self, coordinate: Coordinate) -> TileType {
-        for apple in &self.apples {
-            if apple == &coordinate {
-                return TileType::Apple;
-            }
+        if self.apples.get::<String>(&coordinate.into()).is_some() {
+            return TileType::Apple;
         }
 
         for (position, part_position) in self.snake.parts().iter().enumerate() {
@@ -106,5 +98,20 @@ impl World {
 
     pub fn max_y(&self) -> usize {
         self.max_y
+    }
+
+    fn check_apple_eaten(&mut self) {
+        let head_position: String = self.snake.head_position().into();
+        if self.apples.get(&head_position).is_some() {
+            self.snake.grow();
+            self.events.push(Event::AppleEaten);
+            self.apples.remove(&head_position);
+            self.add_random_apple()
+        }
+    }
+
+    fn add_random_apple(&mut self) {
+        self.apples
+            .insert(Coordinate::random(self.max_x, self.max_y).into(), true);
     }
 }

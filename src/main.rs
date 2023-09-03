@@ -29,9 +29,9 @@ impl Coordinate {
     }
 }
 
-impl Into<String> for Coordinate {
-    fn into(self) -> String {
-        format!("({},{})", self.x_pos, self.y_pos)
+impl From<Coordinate> for String {
+    fn from(coordinate: Coordinate) -> Self {
+        format!("({},{})", coordinate.x_pos, coordinate.y_pos)
     }
 }
 
