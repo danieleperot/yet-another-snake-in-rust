@@ -6,7 +6,8 @@ use crate::snake::{Direction, Snake};
 pub enum Event {
     Welcome,
     SimpleMove,
-    AppleEaten
+    AppleEaten,
+    Exit
 }
 
 pub struct World {

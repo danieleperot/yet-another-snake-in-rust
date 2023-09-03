@@ -20,13 +20,14 @@ impl Notifications {
 
     pub fn handle_event(&self, event: Event) {
         match event {
-            Event::Welcome => self.play_sound(&START_GAME),
-            Event::SimpleMove => self.play_sound(&SIMPLE_MOVE),
-            Event::AppleEaten => self.play_sound(&APPLE_EATEN)
+            Event::Welcome => self.play_sound(&START_GAME, true),
+            Event::SimpleMove => self.play_sound(&SIMPLE_MOVE, true),
+            Event::AppleEaten => self.play_sound(&APPLE_EATEN, true),
+            Event::Exit => self.play_sound(&EXIT_GAME, false)
         }
     }
 
-    fn play_sound(&self, sound: &[Note]) {
+    fn play_sound(&self, sound: &[Note], in_thread: bool) {
         let volume = self.max_sound_volume.clone();
         let mut sine_waves = vec![];
 
@@ -40,14 +41,16 @@ impl Notifications {
                 );
         }
 
-        std::thread::spawn(move || {
+        let handler = move || {
             let (_stream, stream_handle) = OutputStream::try_default().unwrap();
             let sink = Sink::try_new(&stream_handle).unwrap();
             for note in sine_waves {
                 sink.append(note);
             }
             sink.sleep_until_end();
-        });
+        };
+
+        if in_thread { std::thread::spawn(handler); } else { handler(); }
     }
 }
 
@@ -76,4 +79,10 @@ const START_GAME: [Note; 6] = [
     Note(1200.0, 400, 0.20),
     Note(1000.0, 200, 0.20),
     Note(1200.0, 400, 0.20)
+];
+
+const EXIT_GAME: [Note; 3] = [
+    Note(600.0, 200, 0.20),
+    Note(1000.0, 400, 0.20),
+    Note(800.0, 600, 0.20)
 ];

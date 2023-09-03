@@ -8,7 +8,7 @@ use std::time::Duration;
 use rand::Rng;
 use crate::interact::{UserAction, UserInteraction};
 use crate::notify::Notifications;
-use crate::world::World;
+use crate::world::{Event, World};
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Coordinate {
@@ -35,14 +35,15 @@ fn main() -> () {
     let notifications = Notifications::new(0.05);
     let mut user_interaction = UserInteraction::new();
 
-    game(game_speed, &mut world, notifications, &mut user_interaction);
+    game(game_speed, &mut world, &notifications, &mut user_interaction);
 
     user_interaction.draw_outro();
+    notifications.handle_event(Event::Exit);
 }
 
-fn game(game_speed: u64, world: &mut World, notifications: Notifications, user_interaction: &mut UserInteraction) {
+fn game(game_speed: u64, world: &mut World, notifications: &Notifications, user_interaction: &mut UserInteraction) {
     user_interaction.draw_intro();
-    notifications.handle_event(world::Event::Welcome);
+    notifications.handle_event(Event::Welcome);
 
     loop {
         match user_interaction.user_input() {
