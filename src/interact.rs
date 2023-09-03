@@ -2,9 +2,7 @@ use crate::Coordinate;
 use crate::world::{TileType, World};
 
 use std::io;
-use std::io::{Error, Stdout, Write};
-use std::thread;
-use std::time;
+use std::io::{Stdout, Write};
 
 use termion;
 use termion::AsyncReader;
@@ -17,8 +15,8 @@ const PADDING: usize = 3;
 #[derive(PartialEq)]
 pub enum UserAction {
     Close,
-    Other,
-    NoKey
+    Unsupported,
+    None
 }
 
 #[derive(PartialEq)]
@@ -86,27 +84,27 @@ impl UserInteraction {
         self.done_drawing();
     }
 
-    pub fn clear_screen(&mut self, new_screen: ScreenType) {
+    pub fn user_input(&mut self) -> UserAction {
+        return match self.stdin.next() {
+            None => UserAction::None,
+            Some(input) => match input {
+                Err(_) => UserAction::None,
+                Ok(key) => match key {
+                    Key::Char('q') => UserAction::Close,
+                    Key::Ctrl('C') => UserAction::Close,
+                    _ => UserAction::Unsupported
+                }
+            }
+        }
+    }
+
+    fn clear_screen(&mut self, new_screen: ScreenType) {
         if self.current_screen != new_screen {
             write!(self.stdout, "{}", termion::clear::All, ).unwrap();
             self.current_screen = new_screen;
         }
 
         write!(self.stdout, "{}", termion::cursor::Goto(1, 1)).unwrap();
-    }
-
-    pub fn user_input(&mut self) -> UserAction {
-        return match self.stdin.next() {
-            None => UserAction::NoKey,
-            Some(input) => match input {
-                Err(_) => UserAction::NoKey,
-                Ok(key) => match key {
-                    Key::Char('q') => UserAction::Close,
-                    Key::Ctrl('C') => UserAction::Close,
-                    _ => UserAction::Other
-                }
-            }
-        }
     }
 
     fn draw_padding(&mut self, size: usize) {

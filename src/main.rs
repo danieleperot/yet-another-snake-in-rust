@@ -3,7 +3,6 @@ mod interact;
 mod world;
 mod notify;
 
-use std::process::exit;
 use std::thread::sleep;
 use std::time::Duration;
 use rand::Rng;
@@ -47,7 +46,7 @@ fn game(game_speed: u64, world: &mut World, notifications: Notifications, user_i
 
     loop {
         match user_interaction.user_input() {
-            UserAction::Other => break,
+            UserAction::Unsupported => break,
             UserAction::Close => return,
             _ => {}
         }
@@ -57,7 +56,7 @@ fn game(game_speed: u64, world: &mut World, notifications: Notifications, user_i
     loop {
         let action = user_interaction.user_input();
         if action == UserAction::Close {
-            break;
+            return;
         }
 
         world.tick();
