@@ -86,10 +86,6 @@ impl Snake {
         }
     }
 
-    pub fn parts(&self) -> Vec<Coordinate> {
-        self.parts.clone()
-    }
-
     pub fn head_position(&self) -> Coordinate {
         *self.parts.first().unwrap()
     }

@@ -29,6 +29,7 @@ enum ScreenType {
     Intro,
     Outro,
     Game,
+    GameOver,
 }
 
 pub struct UserInteraction {
@@ -82,6 +83,16 @@ impl UserInteraction {
         self.clear_screen(ScreenType::Outro);
 
         for line in OUTRO_SCREEN {
+            self.println(line);
+        }
+
+        self.done_drawing();
+    }
+
+    pub fn draw_game_over(&mut self) {
+        self.clear_screen(ScreenType::GameOver);
+
+        for line in GAME_OVER {
             self.println(line);
         }
 
@@ -173,6 +184,17 @@ const OUTRO_SCREEN: [&str; 7] = [
     "      ||                                                ||",
     "      ====================================================",
     "",
+];
+
+const GAME_OVER: [&str; 8] = [
+    "",
+    "      ====================================================",
+    "      ||                                                ||",
+    "      ||               Game over! You lost.             ||",
+    "      ||                                                ||",
+    "      ====================================================",
+    "",
+    "               --  Press Q to close the game --",
 ];
 
 const BOTTOM_TEXT: [&str; 2] = ["", "Press Q to exit. Press W,A,S or D to move the snake."];

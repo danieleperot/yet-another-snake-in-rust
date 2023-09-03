@@ -8,6 +8,7 @@ pub enum Event {
     Welcome,
     SimpleMove,
     AppleEaten,
+    Crash,
     Exit,
 }
 
@@ -17,6 +18,7 @@ pub struct World {
     apples: HashMap<String, bool>,
     max_x: usize,
     max_y: usize,
+    done: bool,
 }
 
 pub enum TileType {
@@ -40,6 +42,7 @@ impl World {
             events: vec![],
             max_x,
             max_y,
+            done: false,
         };
 
         world.snake.grow(max_x, max_y);
@@ -69,6 +72,7 @@ impl World {
         self.events.push(Event::SimpleMove);
 
         self.check_apple_eaten();
+        self.check_crash();
     }
 
     pub fn check_tile_in_position(&self, coordinate: Coordinate) -> TileType {
@@ -98,6 +102,10 @@ impl World {
         self.max_y
     }
 
+    pub fn game_ended(&self) -> bool {
+        self.done
+    }
+
     fn check_apple_eaten(&mut self) {
         let head_position: String = self.snake.head_position().into();
         if self.apples.get(&head_position).is_some() {
@@ -111,5 +119,15 @@ impl World {
     fn add_random_apple(&mut self) {
         self.apples
             .insert(Coordinate::random(self.max_x, self.max_y).into(), true);
+    }
+
+    fn check_crash(&mut self) {
+        let head_position = self.snake.head_position();
+        if let Some(part) = self.snake.occupies_coordinates(head_position) {
+            if part == SnakePart::Body {
+                self.events.push(Event::Crash);
+                self.done = true;
+            }
+        }
     }
 }

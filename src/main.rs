@@ -46,11 +46,11 @@ fn main() {
 }
 
 fn game(notifications: &Notifications, user_interaction: &mut UserInteraction) {
-    let game_speed = 1000;
+    let game_speed = 150;
     let mut world = World::new(40, 15);
 
     user_interaction.draw_intro();
-    notifications.handle_event(Event::Welcome);
+    notifications.handle_event(Event::Crash);
 
     loop {
         match user_interaction.user_input() {
@@ -72,6 +72,20 @@ fn game(notifications: &Notifications, user_interaction: &mut UserInteraction) {
         user_interaction.draw_screen(&world);
         notifications.handle_world_events(&world);
 
+        if world.game_ended() {
+            return handle_game_over(user_interaction);
+        }
+
         sleep(Duration::from_millis(game_speed));
+    }
+}
+
+fn handle_game_over(user_interaction: &mut UserInteraction) {
+    user_interaction.draw_game_over();
+
+    loop {
+        if user_interaction.user_input() == UserAction::Close {
+            return;
+        }
     }
 }
