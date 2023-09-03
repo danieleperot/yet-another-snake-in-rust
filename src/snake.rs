@@ -41,14 +41,13 @@ impl Snake {
 
     pub fn grow(&mut self) {
         let last_part = *self.parts.last().unwrap();
-        // Check edge conditions!
+        // TODO: Check edge conditions!
         self.parts.push(Coordinate {
             x_pos: last_part.x_pos,
             y_pos: last_part.y_pos,
         });
     }
 
-    //noinspection RsBorrowChecker
     pub fn slither(&mut self, max_x: usize, max_y: usize) {
         let current_snake = self.clone();
         for (position, part) in self.parts.iter_mut().enumerate() {
@@ -81,7 +80,6 @@ impl Snake {
     }
 }
 
-//noinspection RsBorrowChecker
 fn move_up(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordinate {
     Coordinate::new(
         coordinate.x_pos,
@@ -93,7 +91,6 @@ fn move_up(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordinate
     )
 }
 
-//noinspection RsBorrowChecker
 fn move_right(coordinate: &Coordinate, max_x: &usize, _max_y: &usize) -> Coordinate {
     Coordinate::new(
         if coordinate.x_pos == max_x - 1 {
@@ -105,7 +102,6 @@ fn move_right(coordinate: &Coordinate, max_x: &usize, _max_y: &usize) -> Coordin
     )
 }
 
-//noinspection RsBorrowChecker
 fn move_down(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordinate {
     Coordinate::new(
         coordinate.x_pos,
@@ -117,7 +113,6 @@ fn move_down(coordinate: &Coordinate, _max_x: &usize, max_y: &usize) -> Coordina
     )
 }
 
-//noinspection RsBorrowChecker
 fn move_left(coordinate: &Coordinate, max_x: &usize, _max_y: &usize) -> Coordinate {
     Coordinate::new(
         if coordinate.x_pos == 0 {

@@ -48,7 +48,6 @@ impl UserInteraction {
         }
     }
 
-    //noinspection RsBorrowChecker
     pub fn draw_screen(&mut self, world: &World) {
         self.clear_screen(ScreenType::Game);
 

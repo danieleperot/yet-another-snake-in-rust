@@ -26,7 +26,6 @@ pub enum TileType {
 }
 
 impl World {
-    //noinspection RsBorrowChecker
     pub fn new(max_x: usize, max_y: usize) -> World {
         let mut world = World {
             snake: Snake::new(
@@ -50,7 +49,6 @@ impl World {
         world
     }
 
-    //noinspection RsBorrowChecker
     pub fn tick(&mut self, action: UserAction) {
         self.events.clear();
 
@@ -102,12 +100,10 @@ impl World {
         self.events.clone()
     }
 
-    //noinspection RsBorrowChecker
     pub fn max_x(&self) -> usize {
         self.max_x
     }
 
-    //noinspection RsBorrowChecker
     pub fn max_y(&self) -> usize {
         self.max_y
     }

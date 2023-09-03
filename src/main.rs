@@ -10,7 +10,7 @@ use rand::Rng;
 use std::thread::sleep;
 use std::time::Duration;
 
-#[derive(PartialEq, Copy, Clone, Debug)]
+#[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub struct Coordinate {
     x_pos: usize,
     y_pos: usize,
@@ -29,6 +29,12 @@ impl Coordinate {
     }
 }
 
+impl Into<String> for Coordinate {
+    fn into(self) -> String {
+        format!("({},{})", self.x_pos, self.y_pos)
+    }
+}
+
 fn main() {
     let notifications = Notifications::new(0.05);
     let mut user_interaction = UserInteraction::new();
@@ -39,7 +45,6 @@ fn main() {
     notifications.handle_event(Event::Exit);
 }
 
-//noinspection RsBorrowChecker
 fn game(notifications: &Notifications, user_interaction: &mut UserInteraction) {
     let game_speed = 150;
     let mut world = World::new(40, 15);

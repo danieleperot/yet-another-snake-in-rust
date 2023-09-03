@@ -27,7 +27,6 @@ impl Notifications {
         }
     }
 
-    //noinspection RsBorrowChecker
     fn play_sound(&self, sound: &[Note], in_thread: bool) {
         let volume = self.max_sound_volume;
         let mut sine_waves = vec![];
