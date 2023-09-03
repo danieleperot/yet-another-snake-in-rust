@@ -31,7 +31,7 @@ impl Coordinate {
 fn main() -> () {
     let game_speed = 300;
     let mut world = world::World::new(40, 15);
-    let notifications = notify::Notifications::new(0.005);
+    let notifications = notify::Notifications::new(0.05);
     let mut user_interaction = interact::UserInteraction::new();
 
     user_interaction.draw_intro();

@@ -21,9 +21,17 @@ pub enum UserAction {
     NoKey
 }
 
+#[derive(PartialEq)]
+enum ScreenType {
+    NotStarted,
+    Intro,
+    Game
+}
+
 pub struct UserInteraction {
     stdout: RawTerminal<Stdout>,
-    stdin: Keys<AsyncReader>
+    stdin: Keys<AsyncReader>,
+    current_screen: ScreenType
 }
 
 impl UserInteraction {
@@ -32,12 +40,13 @@ impl UserInteraction {
             // Set terminal to raw mode to allow reading stdin one key at a time
             stdout: io::stdout().into_raw_mode().unwrap(),
             // Use asynchronous stdin
-            stdin: termion::async_stdin().keys()
+            stdin: termion::async_stdin().keys(),
+            current_screen: ScreenType::NotStarted
         }
     }
 
     pub fn draw_screen(&mut self, world: &World) {
-        self.clear_screen();
+        self.clear_screen(ScreenType::Game);
 
         self.draw_padding(world.max_x());
         for y in 0..world.max_y() {
@@ -57,13 +66,22 @@ impl UserInteraction {
     }
 
     pub fn draw_intro(&mut self) {
-        self.clear_screen();
+        self.clear_screen(ScreenType::Intro);
 
         for line in INTRO_SCREEN {
             self.println(line);
         }
 
         self.done_drawing();
+    }
+
+    pub fn clear_screen(&mut self, new_screen: ScreenType) {
+        if self.current_screen != new_screen {
+            write!(self.stdout, "{}", termion::clear::All, ).unwrap();
+            self.current_screen = new_screen;
+        }
+
+        write!(self.stdout, "{}", termion::cursor::Goto(1, 1)).unwrap();
     }
 
     pub fn user_input(&mut self) -> UserAction {
@@ -78,15 +96,6 @@ impl UserInteraction {
                 }
             }
         }
-    }
-
-    fn clear_screen(&mut self) {
-        write!(
-            self.stdout,
-            "{}{}",
-            termion::clear::All,
-            termion::cursor::Goto(1, 1)
-        ).unwrap();
     }
 
     fn draw_padding(&mut self, size: usize) {
