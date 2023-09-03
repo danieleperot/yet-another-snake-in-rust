@@ -38,7 +38,9 @@ impl World {
         };
 
         world.snake.grow();
-        world.apples.push(Coordinate::new(15, 7));
+        world.apples.push(Coordinate::random(max_x, max_y));
+        world.apples.push(Coordinate::random(max_x, max_y));
+        world.apples.push(Coordinate::random(max_x, max_y));
 
         world
     }

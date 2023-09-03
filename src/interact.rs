@@ -128,9 +128,9 @@ impl UserInteraction {
         }
 
         match world.check_tile_in_position(Coordinate::new(x as usize, y)) {
-            TileType::SnakeHead => self.color_print("@@", color::LightGreen),
+            TileType::SnakeHead => self.print("👀"),
             TileType::SnakeBody => self.color_print("##", color::Green),
-            TileType::Apple => self.color_print("AA", color::Red),
+            TileType::Apple => self.print("🍎"),
             TileType::Empty => self.print(".."),
         }
     }
