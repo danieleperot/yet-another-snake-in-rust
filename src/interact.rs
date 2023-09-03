@@ -119,11 +119,6 @@ impl UserInteraction {
     fn done_drawing(&mut self) {
         self.stdout.lock().flush().unwrap();
     }
-
-    fn drop(&mut self) {
-        self.stdout.suspend_raw_mode().unwrap();
-        self.stdout.lock().flush().unwrap();
-    }
 }
 
 const INTRO_SCREEN: [&str; 9] = [

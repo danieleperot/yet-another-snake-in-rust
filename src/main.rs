@@ -28,7 +28,7 @@ impl Coordinate {
     }
 }
 
-fn main() {
+fn main() -> () {
     let game_speed = 300;
     let mut world = world::World::new(40, 15);
     let notifications = notify::Notifications::new(0.005);
@@ -39,7 +39,7 @@ fn main() {
     loop {
         match user_interaction.user_input() {
             UserAction::Other => break,
-            UserAction::Close => exit(0),
+            UserAction::Close => return,
             _ => {}
         }
     }
