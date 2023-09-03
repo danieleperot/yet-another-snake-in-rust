@@ -1,19 +1,19 @@
-mod snake;
 mod interact;
-mod world;
 mod notify;
+mod snake;
+mod world;
 
-use std::thread::sleep;
-use std::time::Duration;
-use rand::Rng;
 use crate::interact::{UserAction, UserInteraction};
 use crate::notify::Notifications;
 use crate::world::{Event, World};
+use rand::Rng;
+use std::thread::sleep;
+use std::time::Duration;
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Coordinate {
     x_pos: usize,
-    y_pos: usize
+    y_pos: usize,
 }
 
 impl Coordinate {
@@ -24,7 +24,7 @@ impl Coordinate {
     pub fn random(max_x: usize, max_y: usize) -> Coordinate {
         Coordinate {
             x_pos: rand::thread_rng().gen_range(0..max_x),
-            y_pos: rand::thread_rng().gen_range(0..max_y)
+            y_pos: rand::thread_rng().gen_range(0..max_y),
         }
     }
 }
@@ -35,13 +35,23 @@ fn main() -> () {
     let notifications = Notifications::new(0.05);
     let mut user_interaction = UserInteraction::new();
 
-    game(game_speed, &mut world, &notifications, &mut user_interaction);
+    game(
+        game_speed,
+        &mut world,
+        &notifications,
+        &mut user_interaction,
+    );
 
     user_interaction.draw_outro();
     notifications.handle_event(Event::Exit);
 }
 
-fn game(game_speed: u64, world: &mut World, notifications: &Notifications, user_interaction: &mut UserInteraction) {
+fn game(
+    game_speed: u64,
+    world: &mut World,
+    notifications: &Notifications,
+    user_interaction: &mut UserInteraction,
+) {
     user_interaction.draw_intro();
     notifications.handle_event(Event::Welcome);
 

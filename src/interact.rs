@@ -1,15 +1,15 @@
-use crate::Coordinate;
 use crate::world::{TileType, World};
+use crate::Coordinate;
 
 use std::io;
 use std::io::{Stdout, Write};
 
 use termion;
-use termion::{AsyncReader, color};
 use termion::color::Color;
 use termion::event::Key;
 use termion::input::{Keys, TermRead};
 use termion::raw::{IntoRawMode, RawTerminal};
+use termion::{color, AsyncReader};
 
 const PADDING: usize = 3;
 
@@ -21,7 +21,7 @@ pub enum UserAction {
     MoveLeft,
     Close,
     Unsupported,
-    None
+    None,
 }
 
 #[derive(PartialEq)]
@@ -29,23 +29,23 @@ enum ScreenType {
     NotStarted,
     Intro,
     Outro,
-    Game
+    Game,
 }
 
 pub struct UserInteraction {
     stdout: RawTerminal<Stdout>,
     stdin: Keys<AsyncReader>,
-    current_screen: ScreenType
+    current_screen: ScreenType,
 }
 
 impl UserInteraction {
-    pub fn new () -> Self {
+    pub fn new() -> Self {
         UserInteraction {
             // Set terminal to raw mode to allow reading stdin one key at a time
             stdout: io::stdout().into_raw_mode().unwrap(),
             // Use asynchronous stdin
             stdin: termion::async_stdin().keys(),
-            current_screen: ScreenType::NotStarted
+            current_screen: ScreenType::NotStarted,
         }
     }
 
@@ -101,15 +101,15 @@ impl UserInteraction {
                     Key::Char('d') => UserAction::MoveRight,
                     Key::Char('q') => UserAction::Close,
                     Key::Ctrl('C') => UserAction::Close,
-                    _ => UserAction::Unsupported
-                }
-            }
-        }
+                    _ => UserAction::Unsupported,
+                },
+            },
+        };
     }
 
     fn clear_screen(&mut self, new_screen: ScreenType) {
         if self.current_screen != new_screen {
-            write!(self.stdout, "{}", termion::clear::All, ).unwrap();
+            write!(self.stdout, "{}", termion::clear::All,).unwrap();
             self.current_screen = new_screen;
         }
 
@@ -117,7 +117,9 @@ impl UserInteraction {
     }
 
     fn draw_padding(&mut self, size: usize) {
-        for _ in 0..(size + 2 * PADDING) { self.print("==") }
+        for _ in 0..(size + 2 * PADDING) {
+            self.print("==")
+        }
         self.println("");
     }
 
@@ -136,12 +138,7 @@ impl UserInteraction {
     }
 
     fn color_print<C: Color>(&mut self, string: &str, color: C) {
-        self.print(format!(
-            "{}{}{}",
-            color::Fg(color),
-            string,
-            color::Fg(color::Reset)
-        ).as_str())
+        self.print(format!("{}{}{}", color::Fg(color), string, color::Fg(color::Reset)).as_str())
     }
 
     fn print(&mut self, string: &str) {
@@ -166,7 +163,7 @@ const INTRO_SCREEN: [&str; 9] = [
     "      ====================================================",
     "",
     "                --  Press ANY KEY to start --",
-    "                      or press Q to exit"
+    "                      or press Q to exit",
 ];
 
 const OUTRO_SCREEN: [&str; 7] = [
@@ -176,10 +173,7 @@ const OUTRO_SCREEN: [&str; 7] = [
     "      ||            Thanks for playing Snake!           ||",
     "      ||                                                ||",
     "      ====================================================",
-    ""
+    "",
 ];
 
-const BOTTOM_TEXT: [&str; 2] = [
-    "",
-    "Press Q to exit. Press W,A,S or D to move the snake."
-];
+const BOTTOM_TEXT: [&str; 2] = ["", "Press Q to exit. Press W,A,S or D to move the snake."];
