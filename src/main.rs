@@ -46,7 +46,7 @@ fn main() {
 }
 
 fn game(notifications: &Notifications, user_interaction: &mut UserInteraction) {
-    let game_speed = 150;
+    let game_speed = 1000;
     let mut world = World::new(40, 15);
 
     user_interaction.draw_intro();

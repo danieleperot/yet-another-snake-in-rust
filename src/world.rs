@@ -1,5 +1,5 @@
 use crate::interact::UserAction;
-use crate::snake::{Direction, Snake};
+use crate::snake::{Direction, Snake, SnakePart};
 use crate::Coordinate;
 use std::collections::HashMap;
 
@@ -42,7 +42,7 @@ impl World {
             max_y,
         };
 
-        world.snake.grow();
+        world.snake.grow(max_x, max_y);
         world.add_random_apple();
         world.add_random_apple();
         world.add_random_apple();
@@ -76,13 +76,11 @@ impl World {
             return TileType::Apple;
         }
 
-        for (position, part_position) in self.snake.parts().iter().enumerate() {
-            if part_position == &coordinate {
-                return match position {
-                    0 => TileType::SnakeHead,
-                    _ => TileType::SnakeBody,
-                };
-            }
+        if let Some(snake_part) = self.snake.occupies_coordinates(coordinate) {
+            return match snake_part {
+                SnakePart::Head => TileType::SnakeHead,
+                SnakePart::Body => TileType::SnakeBody,
+            };
         }
 
         TileType::Empty
@@ -103,7 +101,7 @@ impl World {
     fn check_apple_eaten(&mut self) {
         let head_position: String = self.snake.head_position().into();
         if self.apples.get(&head_position).is_some() {
-            self.snake.grow();
+            self.snake.grow(self.max_x, self.max_y);
             self.events.push(Event::AppleEaten);
             self.apples.remove(&head_position);
             self.add_random_apple()
