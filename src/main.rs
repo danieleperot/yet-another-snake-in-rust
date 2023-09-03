@@ -7,7 +7,9 @@ use std::process::exit;
 use std::thread::sleep;
 use std::time::Duration;
 use rand::Rng;
-use crate::interact::UserAction;
+use crate::interact::{UserAction, UserInteraction};
+use crate::notify::Notifications;
+use crate::world::World;
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Coordinate {
@@ -30,12 +32,19 @@ impl Coordinate {
 
 fn main() -> () {
     let game_speed = 300;
-    let mut world = world::World::new(40, 15);
-    let notifications = notify::Notifications::new(0.05);
-    let mut user_interaction = interact::UserInteraction::new();
+    let mut world = World::new(40, 15);
+    let notifications = Notifications::new(0.05);
+    let mut user_interaction = UserInteraction::new();
 
+    game(game_speed, &mut world, notifications, &mut user_interaction);
+
+    user_interaction.draw_outro();
+}
+
+fn game(game_speed: u64, world: &mut World, notifications: Notifications, user_interaction: &mut UserInteraction) {
     user_interaction.draw_intro();
     notifications.handle_event(world::Event::Welcome);
+
     loop {
         match user_interaction.user_input() {
             UserAction::Other => break,

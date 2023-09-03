@@ -25,6 +25,7 @@ pub enum UserAction {
 enum ScreenType {
     NotStarted,
     Intro,
+    Outro,
     Game
 }
 
@@ -69,6 +70,16 @@ impl UserInteraction {
         self.clear_screen(ScreenType::Intro);
 
         for line in INTRO_SCREEN {
+            self.println(line);
+        }
+
+        self.done_drawing();
+    }
+
+    pub fn draw_outro(&mut self) {
+        self.clear_screen(ScreenType::Outro);
+
+        for line in OUTRO_SCREEN {
             self.println(line);
         }
 
@@ -140,6 +151,16 @@ const INTRO_SCREEN: [&str; 9] = [
     "",
     "                --  Press ANY KEY to start --",
     "                      or press Q to exit"
+];
+
+const OUTRO_SCREEN: [&str; 7] = [
+    "",
+    "      ====================================================",
+    "      ||                                                ||",
+    "      ||            Thanks for playing Snake!           ||",
+    "      ||                                                ||",
+    "      ====================================================",
+    ""
 ];
 
 const BOTTOM_TEXT: [&str; 2] = [
